@@ -3,7 +3,9 @@
 #include <string.h>
 
 int main() {
-    char *list[10000],*temp[100]; // Assuming maximum 100 strings in the list
+    char *temp[1000]; // Assuming maximum 1000 strings in the list
+    char *list[] = StrList_alloc();
+    StrList_free(list); 
     int size = 0,index = 0;
     char choice,words;
     // Display menu
