@@ -1,112 +1,291 @@
-#pragma once
-
+#include "StrList.h"
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-/********************************************************************************
- *
- * A StrList library.
- *
- * This library provides a StrList of STRINGS data structure.
- *
- * This library will fail in unpredictable ways when the system memory runs
- * out.
- *
- ********************************************************************************/
+// Define the structure of a node
+typedef struct _Node {
+    char* data;
+    struct _Node* next;
+} Node;
 
-/*
- * StrList represents a StrList data structure.
- */
-struct _StrList;
-typedef struct _StrList StrList;
+// Define the structure of the linked list
+struct _StrList {
+    Node* head;
+    size_t size;
+};
 
-/*
- * Allocates a new empty StrList.
- * It's the user responsibility to free it with StrList_free.
- */
-StrList* StrList_alloc();
+// Function to allocate a new empty StrList
+StrList* StrList_alloc() {
+    StrList* list = (StrList*)malloc(sizeof(StrList));
+    if (list) {
+        list->head = NULL;
+        list->size = 0;
+    }
+    return list;
+}
 
-/*
- * Frees the memory and resources allocated to StrList.
- * If StrList==NULL does nothing (same as free).
- */
-void StrList_free(StrList* StrList);
+// Function to free memory allocated for StrList
+void StrList_free(StrList* list) {
+    if (list) {
+        Node* current = list->head;
+        while (current) {
+            Node* next = current->next;
+            free(current->data); // Free the string data
+            free(current);       // Free the node
+            current = next;
+        }
+        free(list); // Free the list itself
+    }
+}
 
-/*
- * Returns the number of elements in the StrList.
- */
-size_t StrList_size(const StrList* StrList);
+// Function to insert an element at the end of the StrList
+void StrList_insertLast(StrList* list, const char* data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode) {
+        newNode->data = strdup(data); // Duplicate the string to store in the node
+        newNode->next = NULL;
 
-/*
- * Inserts an element in the end of the StrList.
- */
-void StrList_insertLast(StrList* StrList,
-					  const char* data);
+        if (list->head == NULL) {
+            list->head = newNode;
+        } else {
+            Node* current = list->head;
+            while (current->next) {
+                current = current->next;
+            }
+            current->next = newNode;
+        }
+        list->size++;
+    }
+}
 
-/*
-* Inserts an element at given index
-*/
-void StrList_insertAt(StrList* StrList,
-	const char* data,int index);
+// Function to insert an element at a given index
+void StrList_insertAt(StrList* list, const char* data, int index) {
+    if (index < 0 || index > list->size) {
+        printf("Invalid index\n");
+        return;
+    }
 
-/*
- * Returns the StrList first data.
- */
-char* StrList_firstData(const StrList* StrList);
+    if (index == 0) {
+        Node* newNode = (Node*)malloc(sizeof(Node));
+        newNode->data = strdup(data);
+        newNode->next = list->head;
+        list->head = newNode;
+        list->size++;
+        return;
+    }
 
-/*
- * Prints the StrList to the standard output.
- */
-void StrList_print(const StrList* StrList);
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = strdup(data);
 
-/*
- Prints the word at the given index to the standard output.
-*/
-void StrList_printAt(const StrList* Strlist,int index);
+    Node* current = list->head;
+    for (int i = 0; i < index - 1; i++) {
+        current = current->next;
+    }
+    newNode->next = current->next;
+    current->next = newNode;
+    list->size++;
+}
 
-/*
- * Return the amount of chars in the list.
-*/
-int StrList_printLen(const StrList* Strlist);
+// Function to return the first data
+char* StrList_firstData(const StrList* list) {
+    if (list->head) {
+        return list->head->data;
+    }
+    return NULL;
+}
 
-/*
-Given a string, return the number of times it exists in the list.
-*/
-int StrList_count(StrList* StrList, const char* data);
+// Function to print the StrList
+void StrList_print(const StrList* list) {
+    Node* current = list->head;
+    while (current) {
+        printf("%s -> ", current->data);
+        current = current->next;
+    }
+    printf("NULL\n");
+}
 
-/*
-	Given a string and a list, remove all the appearences of this string in the list.
-*/
-void StrList_remove(StrList* StrList, const char* data);
+// Function to print the word at a given index
+void StrList_printAt(const StrList* list, int index) {
+    if (index < 0 || index >= list->size) {
+        printf("Index out of bounds\n");
+        return;
+    }
 
-/*
-	Given an index and a list, remove the string at that index.
-*/
-void StrList_removeAt(StrList* StrList, int index);
+    Node* current = list->head;
+    for (int i = 0; i < index; i++) {
+        current = current->next;
+    }
+    printf("%s\n", current->data);
+}
 
-/*
- * Checks if two StrLists have the same elements
- * returns 0 if not and any other number if yes
- */
-int StrList_isEqual(const StrList* StrList1, const StrList* StrList2);
+// Function to return the amount of characters in the list
+int StrList_printLen(const StrList* list) {
+    int totalLen = 0;
+    Node* current = list->head;
+    while (current) {
+        totalLen += strlen(current->data);
+        current = current->next;
+    }
+    return totalLen;
+}
 
-/*
- * Clones the given StrList. 
- * It's the user responsibility to free it with StrList_free.
- */
-StrList* StrList_clone(const StrList* StrList);
+// Function to count occurrences of a string in the list
+int StrList_count(StrList* list, const char* data) {
+    int count = 0;
+    Node* current = list->head;
+    while (current) {
+        if (strcmp(current->data, data) == 0) {
+            count++;
+        }
+        current = current->next;
+    }
+    return count;
+}
 
-/*
- * Reverces the given StrList. 
- */
-void StrList_reverse( StrList* StrList);
+// Function to remove all occurrences of a string from the list
+void StrList_remove(StrList* list, const char* data) {
+    Node* current = list->head;
+    Node* prev = NULL;
 
-/*
- * Sort the given list in lexicographical order 
- */
-void StrList_sort( StrList* StrList);
+    while (current) {
+        if (strcmp(current->data, data) == 0) {
+            if (prev == NULL) {
+                list->head = current->next;
+            } else {
+                prev->next = current->next;
+            }
+            Node* temp = current;
+            current = current->next;
+            free(temp->data);
+            free(temp);
+            list->size--;
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+}
 
-/*
- * Checks if the given list is sorted in lexicographical order
- * returns 1 for sorted,   0 otherwise
- */
-int StrList_isSorted(StrList* StrList);
+// Function to remove an element at a given index
+void StrList_removeAt(StrList* list, int index) {
+    if (index < 0 || index >= list->size) {
+        printf("Index out of bounds\n");
+        return;
+    }
+
+    Node* current = list->head;
+    Node* prev = NULL;
+
+    for (int i = 0; i < index; i++) {
+        prev = current;
+        current = current->next;
+    }
+
+    if (prev == NULL) {
+        list->head = current->next;
+    } else {
+        prev->next = current->next;
+    }
+
+    free(current->data);
+    free(current);
+    list->size--;
+}
+
+// Function to check if two lists have the same elements
+int StrList_isEqual(const StrList* list1, const StrList* list2) {
+    if (list1->size != list2->size) {
+        return 0;
+    }
+
+    Node* current1 = list1->head;
+    Node* current2 = list2->head;
+
+    while (current1 && current2) {
+        if (strcmp(current1->data, current2->data) != 0) {
+            return 0;
+        }
+        current1 = current1->next;
+        current2 = current2->next;
+    }
+
+    return 1;
+}
+
+// Function to clone a list
+StrList* StrList_clone(const StrList* list) {
+    StrList* newList = StrList_alloc();
+    if (!newList) {
+        return NULL;
+    }
+
+    Node* current = list->head;
+    while (current) {
+        StrList_insertLast(newList, current->data);
+        current = current->next;
+    }
+
+    return newList;
+}
+
+// Function to reverse the list
+void StrList_reverse(StrList* list) {
+    Node* prev = NULL;
+    Node* current = list->head;
+    Node* next = NULL;
+
+    while (current) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+
+    list->head = prev;
+}
+
+// Function to sort the list in lexicographical order
+void StrList_sort(StrList* list) {
+    // Bubble sort
+    int swapped;
+    Node* ptr1;
+    Node* lptr = NULL;
+
+    /* Checking for empty list */
+    if (list->head == NULL)
+        return;
+
+    do {
+        swapped = 0;
+        ptr1 = list->head;
+
+        while (ptr1->next != lptr) {
+            if (strcmp(ptr1->data, ptr1->next->data) > 0) {
+                char* temp = ptr1->data;
+                ptr1->data = ptr1->next->data;
+                ptr1->next->data = temp;
+                swapped = 1;
+            }
+            ptr1 = ptr1->next;
+        }
+        lptr = ptr1;
+    } while (swapped);
+}
+
+// Function to check if the list is sorted in lexicographical order
+int StrList_isSorted(StrList* list) {
+    Node* current = list->head;
+    while (current && current->next) {
+        if (strcmp(current->data, current->next->data) > 0) {
+            return 0;
+        }
+        current = current->next;
+    }
+    return 1;
+}
+
+size_t 
+StrList_size(const StrList* list) {
+    return list->size;
+} 
