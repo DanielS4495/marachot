@@ -97,11 +97,11 @@ char* StrList_firstData(const StrList* list) {
 
 // Function to print the StrList
 void StrList_print(const StrList* list) {
-    Node* current = list->head;
-    if (list == NULL){
-        printf("null\n");
+    if (list == NULL || list->head == NULL) {
+        printf("\n");
     }
     else {
+        Node* current = list->head;
         while (current) {
             printf("%s ", current->data);
             current = current->next;
