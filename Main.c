@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "StrList.h"
 
 int main() {
-    char *list[10000],*temp[100]; // Assuming maximum 100 strings in the list
-    int size = 0,index = 0;
-    char choice,words;
+    StrList *list = StrList_alloc();
+    int size = 0,index = 0, ascii_code = 0;
+    char choice[3] = {'1','0','0'};
+    char temp[10000]; // Assuming maximum 10000 chars in a word
     // Display menu
     printf("\nMenu:\n");
     printf("1. Add strings to list\n");
@@ -22,83 +24,108 @@ int main() {
     printf("12. Sort list\n");
     printf("13. Check if list is sorted\n");
     printf("0. Exit\n");
-    printf("Enter your choice: ");
-
-    while(choice != 0){
-        scanf(" %c", &choice);
+    
+    while(choice[0] != '0'){
+        printf("Enter your choice: ");
+        scanf(" %2s", choice);
+        // Check if the length of the choice is valid
+        if (choice[1] == '\0') {
+            // Calculate the ASCII code based on the first character of the choice
+            ascii_code = (int)choice[0];
+        }
+        else if (strlen(choice) == 2) {
+            // Calculate the ASCII code if two characters were entered
+            ascii_code = (int)choice[1] + 10;
+        }else{
+            // Invalid choice length
+            printf("Invalid choice 1. Please try again.\n");
+            break;
+        }
+        // Check if the ASCII code is within the valid range
+        if (ascii_code < 48 && ascii_code > 61) {
+            printf("Invalid choice from Menu. Please try again.\n");
+            break;
+        }
         // Perform action based on user choice
-        switch(choice) {
-            case '1':
-                scanf(" %c", &words);
-                if(words-'A'==0)
-                    printf("Invalid choice. Please try again.\n"); break;
+        switch(ascii_code) {
+            case 49:
                 scanf(" %d",&size);
-                for(int i=0;i<size;i++){
-                    scanf(" %s", temp);
-                    StrList_insertLast(list,temp);
+                getchar();
+                fgets(temp, sizeof(temp), stdin);
+                char *token = strtok(temp, " \n");
+                while (token != NULL && size > 0) {
+                    // Insert each word into the list
+                    StrList_insertLast(list,token);
+                    token = strtok(NULL, " \n");
+                    size--;
                 }
                 break;
-            case '2':
+            case 50:
                 // Insert string at index
-                scanf(" %d %[^\n]s", &index, temp);
+                scanf(" %d", &index);
+                getchar();
+                scanf("%[^\n]", temp);
                 StrList_insertAt(list,temp,index);
                 break;
-            case '3':
+            case 51:
+                // Print List
                 StrList_print(list);
                 break;
-            case '4':
+            case 52:
+                // Print size of List
                 size = StrList_size(list);
-                printf("The size of List is %d",size);
+                printf("The size of List is %d\n",size);
                 break;
-            case '5':
+            case 53:
                 // Print string at index
                 scanf(" %d", &index);
                 StrList_printAt(list,index);
                 break;
-            case '6':
+            case 54:
                 // Print occurrences of chars
                 size = StrList_printLen(list);
-                printf("The size of char in the List is %d",size);
+                printf("The size of char in the List is %d\n",size);
                 break;
-            case '7':
+            case 55:
                 // Print occurrences of string
-                scanf(" %[^\n]s", temp);
-                StrList_count(list,temp);
+                scanf(" %[^\n]", temp);
+                size = StrList_count(list,temp);
+                printf("The size of the occurrences of string is %d\n",size);
                 break;
-            case '8':
+            case 56:
                 // Remove occurrences of string
-                scanf(" %[^\n]s", temp);
+                scanf(" %[^\n]", temp);
                 StrList_remove(list,temp);
                 break;
-            case '9':
+            case 57:
                 // Remove string at index
                 scanf(" %d", &index);
                 StrList_removeAt(list,index);
                 break;
-            case '10':
+            case 58:
                 // Reverse list
                 StrList_reverse(list);
                 break;
-            case '11':
+            case 59:
                 // Clear list
                 StrList_free(list);
                 break;
-            case '12':
+            case 60:
                 // Sort list
                 StrList_sort(list);
                 break;
-            case '13':
+            case 61:
                 // Check if list is sorted
-                StrList_isSorted(list);
+                int b = StrList_isSorted(list);
+                if(b) printf("The List is sorted\n");
+                else printf("The List is not sorted\n");
                 break;
-            case '0':
+            case 48:
                 printf("Exiting program.\n");
                 break;
             default:
-                printf("Invalid choice. Please try again.\n");
-        
-        } 
+                printf("Invalid choice Menu. Please try again.\n");
+        }
     }
     return 0;
-
 }
