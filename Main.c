@@ -8,25 +8,7 @@ int main() {
     int size = 0,index = 0, ascii_code = 0;
     char choice[3] = {'1','0','0'};
     char temp[10000]; // Assuming maximum 10000 chars in a word
-    // Display menu
-    // printf("\nMenu:\n");
-    // printf("1. Add strings to list\n");
-    // printf("2. Insert string at index\n");
-    // printf("3. Print list\n");
-    // printf("4. Print list length\n");
-    // printf("5. Print string at index\n");
-    // printf("6. Print number of characters appearing in the list\n");
-    // printf("7. Print number of occurrences of a string\n");
-    // printf("8. Remove all occurrences of a string\n");
-    // printf("9. Remove string at index\n");
-    // printf("10. Reverse list\n");
-    // printf("11. Clear list\n");
-    // printf("12. Sort list\n");
-    // printf("13. Check if list is sorted\n");
-    // printf("0. Exit\n");
-    
     while(choice[0] != '0'){
-        // printf("Enter your choice: ");
         scanf(" %2s", choice);
         // Check if the length of the choice is valid
         if (choice[1] == '\0') {
@@ -38,7 +20,7 @@ int main() {
             ascii_code = (int)choice[1] + 10;
         }else{
             // Invalid choice length
-            printf("Invalid choice 1. Please try again.\n");
+            printf("Invalid choice 1ength. Please try again.\n");
             break;
         }
         // Check if the ASCII code is within the valid range
