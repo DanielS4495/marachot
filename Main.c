@@ -105,7 +105,12 @@ int main() {
             case 48:
                 break;
             default:
+                int c;
+                // Read characters until newline is encountered
+                while ((c = getchar()) != '\n' && c != EOF) {
+                }
                 printf("Invalid choice Menu. Please try again.\n");
+
         }
     }
     return 0;
