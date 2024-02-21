@@ -90,6 +90,7 @@ int main() {
                 break;
             case 59:
                 // Clear list
+                StrList_free(list);
                 list = StrList_alloc();
                 break;
             case 60:
