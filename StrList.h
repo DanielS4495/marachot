@@ -17,7 +17,7 @@
  * StrList represents a StrList data structure.
  */
 struct _StrList;
-typedef struct _StrList StrList;
+typedef struct _StrList StrList; 
 
 /*
  * Allocates a new empty StrList.

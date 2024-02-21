@@ -17,7 +17,7 @@ struct _StrList {
 
 // Function to allocate a new empty StrList
 StrList* StrList_alloc() {
-    StrList* list = (StrList*)malloc(sizeof(StrList));
+    StrList* list = (StrList*)malloc(sizeof(StrList)); 
     if (list) {
         list->head = NULL;
         list->size = 0;
